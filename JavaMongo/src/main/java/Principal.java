@@ -8,6 +8,7 @@ import org.bson.Document;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 
 public class Principal {
 	public static void main(String[] args) {
@@ -25,8 +26,12 @@ public class Principal {
 				new Document()
 				.append("nome", "Espanhol")
 				.append("nivel", "Basico")));
-				
-		alunos.insertOne(novoAluno);
+
+		// Alterando 
+		alunos.updateOne(Filters.eq("nome", "Joao"), new Document("$set", new Document("nome", "Joao Silva")));
+		
+		// Apagando
+//		alunos.deleteOne(Filters.eq("nome", "Joao Silva"));
 		
 		cliente.close();
 	}
