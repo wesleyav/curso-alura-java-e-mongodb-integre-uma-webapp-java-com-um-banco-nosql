@@ -19,11 +19,12 @@ import org.bson.types.ObjectId;
 import br.com.alura.escolalura.models.Aluno;
 import br.com.alura.escolalura.models.Curso;
 import br.com.alura.escolalura.models.Habilidade;
+import br.com.alura.escolalura.models.Nota;
 
-public class AlunoCodec implements CollectibleCodec<Aluno>{
-	
+public class AlunoCodec implements CollectibleCodec<Aluno> {
+
 	private Codec<Document> codec;
-	
+
 	public AlunoCodec(Codec<Document> codec) {
 		this.codec = codec;
 	}
@@ -35,22 +36,31 @@ public class AlunoCodec implements CollectibleCodec<Aluno>{
 		Date dataNascimento = aluno.getDataNascimento();
 		Curso curso = aluno.getCurso();
 		List<Habilidade> habilidades = aluno.getHabilidades();
-		
+		List<Nota> notas = aluno.getNotas();
+
 		Document document = new Document();
 		document.put("_id", id);
 		document.put("nome", nome);
 		document.put("data_nascimento", dataNascimento);
 		document.put("curso", new Document("nome", curso.getNome()));
-		if(habilidades != null) {
+		if (habilidades != null) {
 			List<Document> habilidadesDocument = new ArrayList<>();
 			for (Habilidade habilidade : habilidades) {
-				habilidadesDocument.add(new Document("nome", habilidade.getNome()).append("nivel", habilidade.getNivel()));
+				habilidadesDocument
+						.add(new Document("nome", habilidade.getNome()).append("nivel", habilidade.getNivel()));
 			}
-			
-			
+
 			document.put("habilidades", habilidadesDocument);
 		}
-		
+
+		if (notas != null) {
+			List<Double> notasParaSalvar = new ArrayList<>();
+			for (Nota nota : notas) {
+				notasParaSalvar.add(nota.getValor());
+			}
+			document.put("notas", notasParaSalvar);
+		}
+
 		codec.encode(writer, document, encoder);
 	}
 
@@ -73,6 +83,24 @@ public class AlunoCodec implements CollectibleCodec<Aluno>{
 			aluno.setCurso(new Curso(nomeCurso));
 		}
 		
+		List<Double> notas = (List<Double>) document.get("notas");
+		
+		if(notas != null) {
+			List<Nota> notasDoAluno = new ArrayList<>();
+			for (Double nota : notas) {
+				notasDoAluno.add(new Nota(nota));
+			}
+			aluno.setNotas(notasDoAluno);
+		}
+		
+		
+		List<Document> habilidades = (List<Document>) document.get("habilidades");
+		if(habilidades != null) {
+			List<Habilidade> habilidadesDoAluno = new ArrayList<>();
+			for (Document documentHabilidade : habilidades) {
+				habilidadesDoAluno.add(new Habilidade(documentHabilidade.getString("nome"), documentHabilidade.getString("nivel")));
+			}
+		}
 		return aluno;
 	}
 
@@ -88,7 +116,7 @@ public class AlunoCodec implements CollectibleCodec<Aluno>{
 
 	@Override
 	public BsonValue getDocumentId(Aluno aluno) {
-		if(!documentHasId(aluno)) {
+		if (!documentHasId(aluno)) {
 			throw new IllegalStateException("Esse Document não tem id");
 		}
 		return new BsonString(aluno.getId().toHexString());

@@ -3,6 +3,12 @@ package br.com.alura.escolalura.models;
 public class Nota {
 
 	private Double valor;
+	
+	public Nota() {}
+
+	public Nota(Double valor) {
+		this.valor = valor;
+	}
 
 	public Double getValor() {
 		return valor;
