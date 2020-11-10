@@ -14,6 +14,15 @@ public class Aluno {
 	private Curso curso;
 	private List<Nota> notas;
 	private List<Habilidade> habilidades;
+	private Contato contato;
+
+	public Contato getContato() {
+		return contato;
+	}
+
+	public void setContato(Contato contato) {
+		this.contato = contato;
+	}
 
 	public ObjectId getId() {
 		return id;
@@ -48,7 +57,7 @@ public class Aluno {
 	}
 
 	public List<Nota> getNotas() {
-		if(notas == null) {
+		if (notas == null) {
 			notas = new ArrayList<Nota>();
 		}
 		return notas;
@@ -59,7 +68,7 @@ public class Aluno {
 	}
 
 	public List<Habilidade> getHabilidades() {
-		if(habilidades == null) {
+		if (habilidades == null) {
 			habilidades = new ArrayList<Habilidade>();
 		}
 		return habilidades;
@@ -75,7 +84,7 @@ public class Aluno {
 	}
 
 	public Aluno adicionar(Aluno aluno, Habilidade habilidade) {
-		List<Habilidade> habilidades =  aluno.getHabilidades();
+		List<Habilidade> habilidades = aluno.getHabilidades();
 		habilidades.add(habilidade);
 		aluno.setHabilidades(habilidades);
 		return aluno;
@@ -86,7 +95,7 @@ public class Aluno {
 		notas.add(nota);
 		aluno.setNotas(notas);
 		return aluno;
-		
+
 	}
 
 }
