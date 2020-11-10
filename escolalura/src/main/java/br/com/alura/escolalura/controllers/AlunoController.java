@@ -1,5 +1,6 @@
 package br.com.alura.escolalura.controllers;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +12,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.google.maps.errors.ApiException;
+
 import br.com.alura.escolalura.models.Aluno;
 import br.com.alura.escolalura.repositories.AlunoRepository;
+import br.com.alura.escolalura.service.GeolocalizacaoService;
 
 @Controller
 public class AlunoController {
 	
 	@Autowired
 	private AlunoRepository repository;
+	
+	@Autowired
+	private GeolocalizacaoService geolocalizacaoService;
+	
 
 	@GetMapping("aluno/cadastrar")
 	public String cadastrar(Model model) {
@@ -29,7 +37,15 @@ public class AlunoController {
 	@PostMapping("/aluno/salvar")
 	public String salvar(@ModelAttribute Aluno aluno) {
 		System.out.println("Aluno para salvar: " + aluno);
-		repository.salvar(aluno);
+		try {
+			List<Double> laElong = geolocalizacaoService.obterLatELongPor(aluno.getContato());
+			aluno.getContato().setCoordinates(laElong);
+			repository.salvar(aluno);
+		} catch (Exception e) {
+			System.out.println("Endereço não localizado");
+			e.printStackTrace();
+		} 
+		
 		return "redirect:/";
 	}
 	
