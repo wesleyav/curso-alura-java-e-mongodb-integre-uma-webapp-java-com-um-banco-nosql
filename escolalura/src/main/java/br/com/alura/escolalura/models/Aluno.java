@@ -62,4 +62,9 @@ public class Aluno {
 		this.habilidades = habilidades;
 	}
 
+	public Aluno criarId() {
+		setId(new ObjectId());
+		return this;
+	}
+
 }
